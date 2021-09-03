@@ -21,7 +21,7 @@ class DBService {
         getCodes()
     }
     
-    func saveCode(id: Int64) {
+    func saveCode(id: String) {
         
         guard let appDelegate =
                 UIApplication.shared.delegate as? AppDelegate else {
@@ -71,9 +71,9 @@ class DBService {
         }
     }
     
-    func doesCodeIdExist(id:Int64) -> Bool {
+    func doesCodeIdExist(id:String) -> Bool {
         self.codes.contains { code in
-            if let idCode = code.value(forKeyPath: "id") as? Int64 {
+            if let idCode = code.value(forKeyPath: "id") as? String {
                 return idCode == id
             } else {
                 return false
@@ -84,9 +84,9 @@ class DBService {
     /**
      function returns first index of found code object
      */
-    func findCodeId(id:Int64) -> Int? {
+    func findCodeId(id:String) -> Int? {
         self.codes.firstIndex { code in
-            if let idCode = code.value(forKeyPath: "id") as? Int64 {
+            if let idCode = code.value(forKeyPath: "id") as? String {
                 return idCode == id
             } else {
                 return false

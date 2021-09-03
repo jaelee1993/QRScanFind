@@ -46,7 +46,7 @@ class MainViewController: UIViewController {
             [unowned self] action in
             
             guard let textField = alert.textFields?.first,
-                  let codeToSave = textField.text, let code = Int64(codeToSave) else {
+                  let code = textField.text else {
                 return
             }
             
@@ -62,7 +62,7 @@ class MainViewController: UIViewController {
                                          style: .cancel)
         
         alert.addTextField { (textField:UITextField) in
-            textField.keyboardType = .numberPad
+            textField.keyboardType = .alphabet
         }
         
         alert.addAction(saveAction)
@@ -87,9 +87,7 @@ class MainViewController: UIViewController {
         
         let scannerViewController = ScannerViewController()
         scannerViewController.codeFound = { code in
-            if let codeId = Int64(code) {
-                self.handleFoundCodeId(id: codeId)
-            }
+            self.handleFoundCodeId(id: code)
         }
         addChild(scannerViewController)
         scannerViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -121,7 +119,7 @@ class MainViewController: UIViewController {
         ])
     }
     
-    func handleFoundCodeId(id:Int64) {
+    func handleFoundCodeId(id:String) {
         if let index = dbService.findCodeId(id: id) {
             highlightedRow = index
             tableView.reloadData()
@@ -129,7 +127,7 @@ class MainViewController: UIViewController {
         } else {
             highlightedRow = nil
             tableView.reloadData()
-            _ = launchTimedModal(text: "Code not found", duration: 2.5, completion: {
+            _ = launchTimedModal(text: "Code \(id)\nnot found", duration: 2.5, completion: {
                 
             })
         }
@@ -145,7 +143,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(UITableViewCell.self), for: indexPath)
         let code = dbService.codes[indexPath.row]
-        if let code = code.value(forKeyPath: "id") as? Int64 {
+        if let code = code.value(forKeyPath: "id") as? String {
             cell.textLabel?.text = "\(code)"
         }
         if let highlightedRow = highlightedRow {
